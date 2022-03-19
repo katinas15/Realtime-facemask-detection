@@ -2,23 +2,23 @@ import cv2
 import numpy as np
 from tensorflow.keras.models import load_model
 print('a')
-model=load_model("./model")
-print('a')
+
 
 labels_dict={0:'without mask',1:'mask'}
 color_dict={0:(0,0,255),1:(0,255,0)}
 print('a')
 
 size = 4
-# webcam = cv2.VideoCapture(0) #Use camera 0
+webcam = cv2.VideoCapture(0) #Use camera 0
 
 print('a')
 # We load the xml file
 classifier = cv2.CascadeClassifier('./haarcascade_frontalface_default.xml')
 print('b')
-webcam = cv2.VideoCapture(0) #Use camera 0
-webcam.release
 print('c')
+model=load_model("./model.h5")
+print('a')
+print(model)
 while True:
     (rval, im) = webcam.read()
     im=cv2.flip(im,1,1) #Flip to act as a mirror
@@ -39,7 +39,7 @@ while True:
         reshaped=np.reshape(normalized,(1,150,150,3))
         reshaped = np.vstack([reshaped])
         result=model.predict(reshaped)
-        #print(result)
+        print(result)
         
         label=np.argmax(result,axis=1)[0]
       
