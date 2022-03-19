@@ -1,24 +1,20 @@
 import cv2
 import numpy as np
 from tensorflow.keras.models import load_model
-print('a')
 
+input_shape = 150
 
 labels_dict={0:'without mask',1:'mask'}
 color_dict={0:(0,0,255),1:(0,255,0)}
-print('a')
 
 size = 4
-webcam = cv2.VideoCapture(0) #Use camera 0
+# webcam = cv2.VideoCapture(0) #Use camera 0
+webcam = cv2.VideoCapture("../0319/su_kauke1.mp4") #Use video file
 
-print('a')
 # We load the xml file
 classifier = cv2.CascadeClassifier('./haarcascade_frontalface_default.xml')
-print('b')
-print('c')
-model=load_model("./model.h5")
-print('a')
-print(model)
+model=load_model("./model2-008.model")
+# model=load_model("./0319/model.h5")
 while True:
     (rval, im) = webcam.read()
     im=cv2.flip(im,1,1) #Flip to act as a mirror
@@ -34,9 +30,9 @@ while True:
         (x, y, w, h) = [v * size for v in f] #Scale the shapesize backup
         #Save just the rectangle faces in SubRecFaces
         face_img = im[y:y+h, x:x+w]
-        resized=cv2.resize(face_img,(150,150))
+        resized=cv2.resize(face_img,(input_shape,input_shape))
         normalized=resized/255.0
-        reshaped=np.reshape(normalized,(1,150,150,3))
+        reshaped=np.reshape(normalized,(1,input_shape, input_shape,3))
         reshaped = np.vstack([reshaped])
         result=model.predict(reshaped)
         print(result)
