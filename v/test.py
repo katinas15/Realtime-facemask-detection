@@ -10,6 +10,7 @@ color_dict={0:(0,0,255),1:(0,255,0)}
 size = 4
 # webcam = cv2.VideoCapture(0) #Use camera 0
 webcam = cv2.VideoCapture("../0319/su_kauke1.mp4") #Use video file
+# webcam = cv2.VideoCapture("../0321/vid.mp4") #Use video file
 
 # We load the xml file
 classifier = cv2.CascadeClassifier('../haarcascade_frontalface_default.xml')
