@@ -1,4 +1,5 @@
 # import the necessary packages
+import tensorflow
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.layers import AveragePooling2D
@@ -32,7 +33,8 @@ CATEGORIES = ["with_mask", "without_mask"]
 # grab the list of images in our dataset directory, then initialize
 # the list of data (i.e., images) and class images
 print("[INFO] loading images...")
-
+physical_devices = tensorflow.config.list_physical_devices('GPU')
+tensorflow.config.experimental.set_memory_growth(physical_devices[0], True)
 data = []
 labels = []
 
@@ -47,17 +49,20 @@ for category in CATEGORIES:
     	data.append(image)
     	labels.append(category)
 
+print("[INFO] aaa")
+
 # perform one-hot encoding on the labels
 lb = LabelBinarizer()
 labels = lb.fit_transform(labels)
 labels = to_categorical(labels)
-
+print("[INFO] aaasda")
 data = np.array(data, dtype="float32")
 labels = np.array(labels)
 
 (trainX, testX, trainY, testY) = train_test_split(data, labels,
 	test_size=0.20, stratify=labels, random_state=42)
 
+print("[INFO] bbb")
 # construct the training image generator for data augmentation
 aug = ImageDataGenerator(
 	rotation_range=20,
@@ -68,10 +73,13 @@ aug = ImageDataGenerator(
 	horizontal_flip=True,
 	fill_mode="nearest")
 
+print("[INFO] ccc")
 # load the MobileNetV2 network, ensuring the head FC layer sets are
 # left off
 baseModel = MobileNetV2(weights="imagenet", include_top=False,
 	input_tensor=Input(shape=(224, 224, 3)))
+
+print("[INFO] ddd")
 
 # construct the head of the model that will be placed on top of the
 # the base model
@@ -81,6 +89,8 @@ headModel = Flatten(name="flatten")(headModel)
 headModel = Dense(128, activation="relu")(headModel)
 headModel = Dropout(0.5)(headModel)
 headModel = Dense(2, activation="softmax")(headModel)
+
+print("[INFO] eee")
 
 # place the head FC model on top of the base model (this will become
 # the actual model we will train)

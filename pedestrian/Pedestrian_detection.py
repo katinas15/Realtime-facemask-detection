@@ -17,6 +17,7 @@ def pedestrian_detection(image, model, layer_name, personidz=0):
 	blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416),
 		swapRB=True, crop=False)
 	model.setInput(blob)
+	print(layer_name)
 	layerOutputs = model.forward(layer_name)
 
 	boxes = []
@@ -69,35 +70,42 @@ config_path = "yolov4-tiny.cfg"
 
 model = cv2.dnn.readNetFromDarknet(config_path, weights_path)
 
-model.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
-model.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+# model.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+# model.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
 print(model)
 
 layer_name = model.getLayerNames()
 layer_name = [layer_name[i - 1] for i in model.getUnconnectedOutLayers()]
-# cap = cv2.VideoCapture("../0321/vid.mp4")
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture("vid.mp4")
+# cap = cv2.VideoCapture(0)
 writer = None
+counter = 30
 
 while True:
 	(grabbed, image) = cap.read()
 
-	if not grabbed:
-		break
-	image = imutils.resize(image, width=700)
-	results = pedestrian_detection(image, model, layer_name,
-		personidz=LABELS.index("person"))
+	print('a')
+	if counter%30==0:
+		print(grabbed)
+		if not grabbed:
+			break
+		image = imutils.resize(image, width=700)
+		results = pedestrian_detection(image, model, layer_name,
+			personidz=LABELS.index("person"))
 
-	for res in results:
-		cv2.rectangle(image, (res[1][0],res[1][1]), (res[1][2],res[1][3]), (0, 255, 0), 2)
-		cv2.putText(image, f'Total Persons : {len(results)}', (40,70), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
+		for res in results:
+			cv2.rectangle(image, (res[1][0],res[1][1]), (res[1][2],res[1][3]), (0, 255, 0), 2)
+			cv2.putText(image, f'Total Persons : {len(results)}', (40,70), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
 
-	cv2.imshow("Detection",image)
+		cv2.imshow("Detection",image)
 
 
 	key = cv2.waitKey(1)
 	if key == 27:
 		break
+
+	counter += 1
+
 
 cap.release()
 cv2.destroyAllWindows()
