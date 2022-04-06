@@ -15,14 +15,12 @@ def pedestrian():
 		image = imutils.resize(image, width=700)
 		results = pedestrian_detection(image, yolo_model, layer_name,
 			personidz=LABELS.index("person"))
-
+            
 		for res in results:
 			cv2.rectangle(image, (res[1][0],res[1][1]), (res[1][2],res[1][3]), (0, 255, 0), 2)
 			cv2.putText(image, f'Total Persons : {len(results)}', (40,70), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
-
-		cv2.imshow("Detection",image)
-		cv2.imshow("Detection2",image)
-
+			cv2.imshow("Detection",image)
+			return len(results)
 
 def facemask():
     (rval, im) = webcam.read()
@@ -50,13 +48,17 @@ def facemask():
             print(result)
             
             label=np.argmax(result,axis=1)[0]
-        
+            has_mask = bool(label)
+            
             cv2.rectangle(im,(x,y),(x+w,y+h),color_dict[label],2)
             cv2.rectangle(im,(x,y-40),(x+w,y),color_dict[label],-1)
             cv2.putText(im, labels_dict[label], (x, y-10),cv2.FONT_HERSHEY_SIMPLEX,0.8,(255,255,255),2)
+            # Show the image
+            cv2.imshow('LIVE',   im)
+            print(has_mask)
+            return has_mask
             
-        # Show the image
-        cv2.imshow('LIVE',   im)
+
 
 def pedestrian_detection(image, model, layer_name, personidz=0):
 	(H, W) = image.shape[:2]
@@ -147,8 +149,12 @@ facemask_model=load_model("./model.h5")
 counter = 30
 
 while True:
-    pedestrian()
-    facemask()
+    number_of_persons = pedestrian()
+    has_mask = facemask()
+
+    if number_of_persons != None and has_mask != None:
+        # if number_of_persons < person_limit and has_mask == True:   open door
+        print(f'number of persons : {number_of_persons} | has mask : {has_mask}')
     key = cv2.waitKey(1)
     if key == 27:
         break
