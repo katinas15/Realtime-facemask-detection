@@ -121,7 +121,7 @@ yolo_model = cv2.dnn.readNetFromDarknet(config_path, weights_path)
 
 layer_name = yolo_model.getLayerNames()
 layer_name = [layer_name[i - 1] for i in yolo_model.getUnconnectedOutLayers()]
-cap = cv2.VideoCapture("vid.mp4")
+cap = cv2.VideoCapture("vidcut.mp4")
 # cap = cv2.VideoCapture(0)
 writer = None
 
@@ -138,7 +138,7 @@ labels_dict={0:'without mask',1:'mask'}
 color_dict={0:(0,0,255),1:(0,255,0)}
 
 size = 4
-webcam = cv2.VideoCapture("./su_kauke1.mp4") #Use video file
+webcam = cv2.VideoCapture("kaukecut.mp4") #Use video file
 
 classifier = cv2.CascadeClassifier('./haarcascade_frontalface_default.xml')
 facemask_model=load_model("./model.h5")
